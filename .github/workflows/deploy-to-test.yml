@@ -3,7 +3,7 @@ name: Deploy Fabric to TEST
 on:
   push:
     branches:
-      - main # Si attiva quando il codice di DEV viene salvato
+      - main 
 
 jobs:
   deploy-to-test:
@@ -12,15 +12,13 @@ jobs:
       - name: Checkout del codice sorgente
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Necessario per creare e inviare nuovi rami
+          fetch-depth: 0 
 
       - name: Sostituisci i GUID (Deployment Rules)
         run: |
-          # 1. Trova e sostituisci il Workspace ID (da DEV a TEST) in tutti i file
-          find . -type f -not -path '*/\.git/*' -exec sed -i 's/9d151055-5883-45ed-970b-7b6628cf14ce/ca209b34-9112-4faf-a25e-3ccea1b76680/g' {} +
-          
-          # 2. Trova e sostituisci il Lakehouse ID (da DEV a TEST) in tutti i file
-          find . -type f -not -path '*/\.git/*' -exec sed -i 's/fccbab2d-4470-4913-bfe2-969b7c966c01/08c3e674-5bf6-4941-8a80-b4d3149230c2/g' {} +
+          # Escludiamo esplicitamente la cartella .github per evitare blocchi di sicurezza
+          find . -type f -not -path '*/\.git/*' -not -path '*/\.github/*' -exec sed -i 's/9d151055-5883-45ed-970b-7b6628cf14ce/ca209b34-9112-4faf-a25e-3ccea1b76680/g' {} +
+          find . -type f -not -path '*/\.git/*' -not -path '*/\.github/*' -exec sed -i 's/fccbab2d-4470-4913-bfe2-969b7c966c01/08c3e674-5bf6-4941-8a80-b4d3149230c2/g' {} +
 
       - name: Crea e pusha il ramo di test (test-release)
         run: |

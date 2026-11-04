@@ -3,7 +3,7 @@ name: Deploy Fabric to TEST
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy-to-test:
@@ -12,13 +12,17 @@ jobs:
       - name: Checkout del codice sorgente
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Sostituisci i GUID (Deployment Rules)
         run: |
-          # Escludiamo esplicitamente la cartella .github per evitare blocchi di sicurezza
+          # 1. Regole per l'ambiente principale (PROVA_DEV -> PROVA_TEST)
           find . -type f -not -path '*/\.git/*' -not -path '*/\.github/*' -exec sed -i 's/9d151055-5883-45ed-970b-7b6628cf14ce/ca209b34-9112-4faf-a25e-3ccea1b76680/g' {} +
           find . -type f -not -path '*/\.git/*' -not -path '*/\.github/*' -exec sed -i 's/fccbab2d-4470-4913-bfe2-969b7c966c01/08c3e674-5bf6-4941-8a80-b4d3149230c2/g' {} +
+
+          # 2. Regole per lo Shortcut OneLake (TRIAL_DEV -> TRIAL_TEST)
+          find . -type f -not -path '*/\.git/*' -not -path '*/\.github/*' -exec sed -i 's/cd5d7f99-489b-4961-8a9f-d87075d6ad29/886d3de4-c827-4caf-afc7-cccd4ebf35e7/g' {} +
+          find . -type f -not -path '*/\.git/*' -not -path '*/\.github/*' -exec sed -i 's/6af8f567-bbcb-44cc-b60b-60408d28ae4c/df05b370-6550-427d-a3ae-494c614a0013/g' {} +
 
       - name: Crea e pusha il ramo di test (test-release)
         run: |
@@ -26,7 +30,7 @@ jobs:
           git config user.email "action@github.com"
           git checkout -b test-release
           git add .
-          git commit -m "Auto-inject GUID per TEST" || echo "Nessuna modifica"
+          git commit -m "Auto-inject GUID per TEST (incluse scorciatoie OneLake)" || echo "Nessuna modifica"
           git push -f origin test-release
           echo "TEST_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
 
@@ -35,7 +39,7 @@ jobs:
 
       - name: Deploy su Fabric via REST API
         env:
-          WORKSPACE_ID: "ca209b34-9112-4faf-a25e-3ccea1b76680" 
+          WORKSPACE_ID: "ca209b34-9112-4faf-a25e-3ccea1b76680"
         run: |
           TOKEN=$(az account get-access-token --resource "https://api.fabric.microsoft.com/" --query accessToken -o tsv)
           

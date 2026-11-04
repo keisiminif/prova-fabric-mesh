@@ -50,7 +50,7 @@ jobs:
                 "remoteCommitHash": "${{ env.TEST_COMMIT }}",
                 "conflictResolution": {
                   "conflictResolutionType": "Workspace",
-                  "conflictResolutionPolicy": "PreferWorkspace"
+                  "conflictResolutionPolicy": "PreferRemote"
                 },
                 "options": {
                   "allowOverrideItems": true

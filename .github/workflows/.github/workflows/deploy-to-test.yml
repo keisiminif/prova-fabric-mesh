@@ -22,7 +22,7 @@ jobs:
 
       - name: Deploy su Fabric via REST API
         env:
-          WORKSPACE_ID: "<TEST_WORKSPACE_ID>" 
+          WORKSPACE_ID: "ca209b34-9112-4faf-a25e-3ccea1b76680" 
         run: |
           # 1. Recupera il token di accesso per Fabric
           TOKEN=$(az account get-access-token --resource "https://api.fabric.microsoft.com/" --query accessToken -o tsv)
